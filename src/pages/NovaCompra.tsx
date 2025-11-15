@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { CategoryButton } from '@/components/CategoryButton';
 import { useApp } from '@/contexts/AppContext';
-import { AnimalCategory, ItemLote } from '@/types';
+import { AnimalCategory, ItemLote, Raca } from '@/types';
 import { Baby, Beef, Rabbit, Beef as Vaca, Scale } from 'lucide-react';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
@@ -46,6 +46,7 @@ const NovaCompra = () => {
   
   // Form fields for item
   const [quantidade, setQuantidade] = useState<string>('');
+  const [raca, setRaca] = useState<Raca | ''>('');
   const [pesoIndividual, setPesoIndividual] = useState<string>('');
   const [pesoTotal, setPesoTotal] = useState<string>('');
   const [valorPorAnimal, setValorPorAnimal] = useState<string>('');
@@ -58,6 +59,7 @@ const NovaCompra = () => {
 
   const resetItemForm = (manterCategoria = false) => {
     setQuantidade('');
+    setRaca('');
     setPesoIndividual('');
     setPesoTotal('');
     setValorPorAnimal('');
@@ -97,6 +99,7 @@ const NovaCompra = () => {
     const novoItem: ItemLote = {
       id: Date.now().toString(),
       categoria: categoriaSelecionada,
+      raca: raca || undefined,
       quantidade: qtd,
       pesoIndividual: pesoInd,
       pesoTotal: pesoTot,
@@ -240,10 +243,11 @@ const NovaCompra = () => {
                 <CardTitle>Itens do Lote ({itensLote.length})</CardTitle>
               </CardHeader>
               <CardContent>
-                <Table>
+                  <Table>
                   <TableHeader>
                     <TableRow>
                       <TableHead>Categoria</TableHead>
+                      <TableHead>Raça</TableHead>
                       <TableHead>Qtd</TableHead>
                       <TableHead>Peso (kg)</TableHead>
                       <TableHead>Valor (R$)</TableHead>
@@ -256,6 +260,7 @@ const NovaCompra = () => {
                         <TableCell className="font-medium">
                           {categoryLabels[item.categoria]}
                         </TableCell>
+                        <TableCell>{item.raca || '-'}</TableCell>
                         <TableCell>{item.quantidade}</TableCell>
                         <TableCell>{item.pesoTotal?.toFixed(0) || '-'}</TableCell>
                         <TableCell>{item.valorTotal?.toLocaleString('pt-BR') || '-'}</TableCell>
@@ -309,6 +314,23 @@ const NovaCompra = () => {
                 />
               </div>
             )}
+
+            <div>
+              <Label htmlFor="raca">Raça</Label>
+              <Select value={raca} onValueChange={(value) => setRaca(value as Raca)}>
+                <SelectTrigger id="raca">
+                  <SelectValue placeholder="Selecione a raça" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="NELORE">Nelore</SelectItem>
+                  <SelectItem value="CRUZADOS">Cruzados</SelectItem>
+                  <SelectItem value="ABERDEEN">Aberdeen</SelectItem>
+                  <SelectItem value="ANGUS">Angus</SelectItem>
+                  <SelectItem value="SENEPOL">Senepol</SelectItem>
+                  <SelectItem value="OUTROS">Outros</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
             {modo === 'individual' ? (
               <div>

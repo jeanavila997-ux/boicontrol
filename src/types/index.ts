@@ -6,6 +6,14 @@ export type AnimalCategory =
   | 'garrote'
   | 'boi';
 
+export type Raca = 
+  | 'NELORE'
+  | 'CRUZADOS'
+  | 'ABERDEEN'
+  | 'ANGUS'
+  | 'SENEPOL'
+  | 'OUTROS';
+
 export interface Fazenda {
   id: string;
   nome: string;
@@ -21,6 +29,7 @@ export interface Produtor {
 export interface ItemLote {
   id: string;
   categoria: AnimalCategory;
+  raca?: Raca;
   quantidade: number;
   pesoIndividual?: number;
   pesoTotal?: number;
