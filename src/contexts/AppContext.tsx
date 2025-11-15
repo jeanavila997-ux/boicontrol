@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { Fazenda, Produtor, Lote, Configuracoes, ItemLote } from '@/types';
+import * as storage from '@/lib/storage';
 
 interface AppContextType {
   fazendas: Fazenda[];
@@ -17,87 +18,91 @@ interface AppContextType {
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
-// Mock data inicial
-const mockFazendas: Fazenda[] = [
-  { id: '1', nome: 'Fazenda Santa Rita', observacoes: 'Fazenda principal' },
-  { id: '2', nome: 'Fazenda Boa Vista', observacoes: 'Fazenda secundária' },
-];
-
-const mockProdutores: Produtor[] = [
-  { id: '1', nome: 'João Silva', observacoes: 'Produtor parceiro há 5 anos' },
-  { id: '2', nome: 'Maria Santos', observacoes: 'Produtora regional' },
-];
-
-const mockLotes: Lote[] = [
-  {
-    id: '1',
-    data: '2025-11-10',
-    fazendaId: '1',
-    produtorId: '1',
-    itens: [
-      {
-        id: '1',
-        categoria: 'bezerro',
-        quantidade: 10,
-        pesoIndividual: 180,
-        pesoTotal: 1800,
-        valorPorAnimal: 2500,
-        valorTotal: 25000,
-        observacoes: 'Animais de boa qualidade'
-      },
-      {
-        id: '2',
-        categoria: 'bezerra',
-        quantidade: 8,
-        pesoIndividual: 160,
-        pesoTotal: 1280,
-        valorPorAnimal: 2200,
-        valorTotal: 17600,
-      }
-    ]
-  }
-];
-
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [fazendas, setFazendas] = useState<Fazenda[]>(mockFazendas);
-  const [produtores, setProdutores] = useState<Produtor[]>(mockProdutores);
-  const [lotes, setLotes] = useState<Lote[]>(mockLotes);
+  const [fazendas, setFazendas] = useState<Fazenda[]>([]);
+  const [produtores, setProdutores] = useState<Produtor[]>([]);
+  const [lotes, setLotes] = useState<Lote[]>([]);
   const [configuracoes, setConfiguracoes] = useState<Configuracoes>({
     kgPorArroba: 15,
     nomeFazendaPrincipal: 'Fazenda Santa Rita'
   });
+  const [loading, setLoading] = useState(true);
 
-  const addFazenda = (fazenda: Omit<Fazenda, 'id'>) => {
+  // Carregar dados do IndexedDB ao iniciar
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        await storage.initDB();
+        await storage.initializeMockData();
+        
+        const [loadedFazendas, loadedProdutores, loadedLotes, loadedConfig] = await Promise.all([
+          storage.getAllFazendas(),
+          storage.getAllProdutores(),
+          storage.getAllLotes(),
+          storage.getConfiguracoes()
+        ]);
+
+        setFazendas(loadedFazendas);
+        setProdutores(loadedProdutores);
+        setLotes(loadedLotes);
+        setConfiguracoes(loadedConfig);
+      } catch (error) {
+        console.error('Erro ao carregar dados:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
+  }, []);
+
+  const addFazenda = async (fazenda: Omit<Fazenda, 'id'>) => {
     const newFazenda: Fazenda = {
       ...fazenda,
       id: Date.now().toString()
     };
+    await storage.addFazenda(newFazenda);
     setFazendas([...fazendas, newFazenda]);
   };
 
-  const addProdutor = (produtor: Omit<Produtor, 'id'>) => {
+  const addProdutor = async (produtor: Omit<Produtor, 'id'>) => {
     const newProdutor: Produtor = {
       ...produtor,
       id: Date.now().toString()
     };
+    await storage.addProdutor(newProdutor);
     setProdutores([...produtores, newProdutor]);
   };
 
-  const addLote = (lote: Omit<Lote, 'id'>) => {
+  const addLote = async (lote: Omit<Lote, 'id'>) => {
     const newLote: Lote = {
       ...lote,
       id: Date.now().toString()
     };
+    await storage.addLote(newLote);
     setLotes([newLote, ...lotes]);
   };
 
-  const updateConfiguracoes = (config: Partial<Configuracoes>) => {
-    setConfiguracoes({ ...configuracoes, ...config });
+  const updateConfiguracoes = async (config: Partial<Configuracoes>) => {
+    const newConfig = { ...configuracoes, ...config };
+    await storage.saveConfiguracoes(newConfig);
+    setConfiguracoes(newConfig);
   };
 
   const getLoteById = (id: string) => lotes.find(l => l.id === id);
   const getFazendaById = (id: string) => fazendas.find(f => f.id === id);
   const getProdutorById = (id: string) => produtores.find(p => p.id === id);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Carregando dados...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <AppContext.Provider
