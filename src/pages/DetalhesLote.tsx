@@ -39,8 +39,52 @@ const DetalhesLote = () => {
   const pesoMedioPorAnimal = quantidadeTotal > 0 ? pesoTotal / quantidadeTotal : 0;
   const arrobas = pesoTotal / configuracoes.kgPorArroba;
 
-  const handleGerarRelatorio = () => {
-    toast.info('Funcionalidade de gerar PDF será implementada na próxima fase');
+  const handleGerarRelatorio = async () => {
+    try {
+      toast.loading('Gerando relatório PDF...');
+      
+      const loteData = {
+        id: lote.id,
+        data: lote.data,
+        fazenda: fazenda?.nome || 'N/A',
+        produtor: produtor?.nome || 'N/A',
+        itens: lote.itens,
+        kgPorArroba: configuracoes.kgPorArroba,
+      };
+
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/gerar-relatorio-pdf`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+          },
+          body: JSON.stringify(loteData),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Erro ao gerar PDF');
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `relatorio-lote-${lote.id}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+
+      toast.dismiss();
+      toast.success('Relatório PDF baixado com sucesso!');
+    } catch (error) {
+      toast.dismiss();
+      toast.error('Erro ao gerar relatório PDF');
+      console.error('Erro:', error);
+    }
   };
 
   return (
