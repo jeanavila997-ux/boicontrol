@@ -2,6 +2,7 @@ import { Home, Plus, Package, Users, MapPin, Settings } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
 import { InstallButton } from '@/components/InstallButton';
 import { cn } from '@/lib/utils';
+import logo from '@/assets/logo.png';
 
 export const Navigation = () => {
   const navItems = [
@@ -18,9 +19,7 @@ export const Navigation = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-2">
-            <div className="bg-primary text-primary-foreground p-2 rounded-lg">
-              <Package className="h-6 w-6" />
-            </div>
+            <img src={logo} alt="BoiControl Logo" className="h-10 w-10" />
             <h1 className="text-xl font-bold text-foreground">BoiControl</h1>
           </div>
           
