@@ -8,11 +8,12 @@ import { Textarea } from '@/components/ui/textarea';
 import { CategoryButton } from '@/components/CategoryButton';
 import { useApp } from '@/contexts/AppContext';
 import { AnimalCategory, ItemLote } from '@/types';
-import { Baby, Beef, Rabbit, Beef as Vaca } from 'lucide-react';
+import { Baby, Beef, Rabbit, Beef as Vaca, Scale } from 'lucide-react';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const categoryIcons = {
   bezerro: Baby,
@@ -36,6 +37,7 @@ const NovaCompra = () => {
   const { fazendas, produtores, addLote } = useApp();
   const navigate = useNavigate();
   
+  const [modo, setModo] = useState<'lote' | 'individual'>('lote');
   const [fazendaSelecionada, setFazendaSelecionada] = useState<string>('');
   const [produtorSelecionado, setProdutorSelecionado] = useState<string>('');
   const [data, setData] = useState<string>(new Date().toISOString().split('T')[0]);
@@ -65,12 +67,26 @@ const NovaCompra = () => {
   };
 
   const handleAddItem = () => {
-    if (!categoriaSelecionada || !quantidade) {
-      toast.error('Preencha categoria e quantidade');
+    if (!categoriaSelecionada) {
+      toast.error('Selecione uma categoria');
       return;
     }
 
-    const qtd = parseInt(quantidade);
+    // No modo individual, quantidade sempre é 1 e precisa de peso individual
+    if (modo === 'individual') {
+      if (!pesoIndividual) {
+        toast.error('Informe o peso do animal');
+        return;
+      }
+    } else {
+      // No modo lote, precisa de quantidade
+      if (!quantidade) {
+        toast.error('Informe a quantidade');
+        return;
+      }
+    }
+
+    const qtd = modo === 'individual' ? 1 : parseInt(quantidade);
     const pesoInd = pesoIndividual ? parseFloat(pesoIndividual) : undefined;
     const pesoTot = pesoTotal ? parseFloat(pesoTotal) : (pesoInd ? pesoInd * qtd : undefined);
     const valorAnim = valorPorAnimal ? parseFloat(valorPorAnimal) : undefined;
@@ -89,7 +105,9 @@ const NovaCompra = () => {
 
     setItensLote([...itensLote, novoItem]);
     resetItemForm();
-    toast.success('Item adicionado ao lote');
+    
+    const mensagem = modo === 'individual' ? 'Animal adicionado' : 'Item adicionado ao lote';
+    toast.success(mensagem);
   };
 
   const handleFecharLote = () => {
@@ -120,6 +138,16 @@ const NovaCompra = () => {
         <h1 className="text-3xl font-bold text-foreground mb-2">Nova Compra</h1>
         <p className="text-muted-foreground">Registre uma nova compra de gado</p>
       </div>
+
+      <Tabs value={modo} onValueChange={(v) => setModo(v as 'lote' | 'individual')} className="mb-6">
+        <TabsList className="grid w-full max-w-md mx-auto grid-cols-2">
+          <TabsTrigger value="lote">Modo Lote</TabsTrigger>
+          <TabsTrigger value="individual" className="gap-2">
+            <Scale className="w-4 h-4" />
+            Pesar Animais
+          </TabsTrigger>
+        </TabsList>
+      </Tabs>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Formulário Principal */}
@@ -252,44 +280,60 @@ const NovaCompra = () => {
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>
-              Adicionar {categoriaSelecionada && categoryLabels[categoriaSelecionada]}
+              {modo === 'individual' ? 'Pesar Animal - ' : 'Adicionar '}{categoriaSelecionada && categoryLabels[categoriaSelecionada]}
             </DialogTitle>
           </DialogHeader>
           
           <div className="space-y-4">
-            <div>
-              <Label htmlFor="quantidade">Quantidade *</Label>
-              <Input
-                id="quantidade"
-                type="number"
-                value={quantidade}
-                onChange={(e) => setQuantidade(e.target.value)}
-                placeholder="Ex: 10"
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
+            {modo === 'lote' && (
               <div>
-                <Label htmlFor="pesoIndividual">Peso Individual (kg)</Label>
+                <Label htmlFor="quantidade">Quantidade *</Label>
+                <Input
+                  id="quantidade"
+                  type="number"
+                  value={quantidade}
+                  onChange={(e) => setQuantidade(e.target.value)}
+                  placeholder="Ex: 10"
+                />
+              </div>
+            )}
+
+            {modo === 'individual' ? (
+              <div>
+                <Label htmlFor="pesoIndividual">Peso do Animal (kg) *</Label>
                 <Input
                   id="pesoIndividual"
                   type="number"
                   value={pesoIndividual}
                   onChange={(e) => setPesoIndividual(e.target.value)}
                   placeholder="Ex: 180"
+                  autoFocus
                 />
               </div>
-              <div>
-                <Label htmlFor="pesoTotal">OU Peso Total (kg)</Label>
-                <Input
-                  id="pesoTotal"
-                  type="number"
-                  value={pesoTotal}
-                  onChange={(e) => setPesoTotal(e.target.value)}
-                  placeholder="Ex: 1800"
-                />
+            ) : (
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="pesoIndividual">Peso Individual (kg)</Label>
+                  <Input
+                    id="pesoIndividual"
+                    type="number"
+                    value={pesoIndividual}
+                    onChange={(e) => setPesoIndividual(e.target.value)}
+                    placeholder="Ex: 180"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="pesoTotal">OU Peso Total (kg)</Label>
+                  <Input
+                    id="pesoTotal"
+                    type="number"
+                    value={pesoTotal}
+                    onChange={(e) => setPesoTotal(e.target.value)}
+                    placeholder="Ex: 1800"
+                  />
+                </div>
               </div>
-            </div>
+            )}
 
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -327,7 +371,7 @@ const NovaCompra = () => {
 
             <div className="flex gap-2">
               <Button onClick={handleAddItem} className="flex-1">
-                Adicionar ao Lote
+                {modo === 'individual' ? 'Adicionar Animal' : 'Adicionar ao Lote'}
               </Button>
               <Button onClick={resetItemForm} variant="outline">
                 Cancelar
