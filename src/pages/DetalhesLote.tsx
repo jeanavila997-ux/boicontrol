@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Calendar, MapPin, User, FileText, Scale, DollarSign } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from 'sonner';
+import { exportCustomPDF } from '@/utils/export';
 
 const categoryLabels = {
   bezerro: 'Bezerro (M)',
@@ -42,48 +43,43 @@ const DetalhesLote = () => {
   const handleGerarRelatorio = async () => {
     try {
       toast.loading('Gerando relatório PDF...');
-      
-      const loteData = {
-        id: lote.id,
-        data: lote.data,
-        fazenda: fazenda?.nome || 'N/A',
-        produtor: produtor?.nome || 'N/A',
-        itens: lote.itens,
-        kgPorArroba: configuracoes.kgPorArroba,
-      };
 
-      const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/gerar-relatorio-pdf`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-          },
-          body: JSON.stringify(loteData),
-        }
+      const infoSection = [
+        { Campo: 'Data', Valor: new Date(lote.data).toLocaleDateString('pt-BR') },
+        { Campo: 'Fazenda', Valor: fazenda?.nome || 'N/A' },
+        { Campo: 'Produtor', Valor: produtor?.nome || 'N/A' },
+        { Campo: 'Total de Animais', Valor: quantidadeTotal },
+        { Campo: 'Peso Total (kg)', Valor: pesoTotal.toFixed(0) },
+        { Campo: 'Arrobas', Valor: arrobas.toFixed(2) },
+        { Campo: 'Valor Total (R$)', Valor: valorTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) },
+      ];
+
+      const itensSection = lote.itens.map((item) => ({
+        Categoria: categoryLabels[item.categoria] || item.categoria,
+        'Raça': item.raca || '-',
+        Quantidade: item.quantidade,
+        'Peso Individual (kg)': item.pesoIndividual || '-',
+        'Peso Total (kg)': item.pesoTotal ? item.pesoTotal.toFixed(0) : '-',
+        'Valor/Animal (R$)': item.valorPorAnimal ? item.valorPorAnimal.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) : '-',
+        'Valor Total (R$)': item.valorTotal ? item.valorTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) : '-',
+        Observações: item.observacoes || '-',
+      }));
+
+      exportCustomPDF(
+        `relatorio-lote-${lote.id}`,
+        'Relatório de Compra de Gado',
+        [
+          { subtitle: 'Informações do Lote', data: infoSection, headers: ['Campo', 'Valor'] },
+          { subtitle: 'Itens do Lote', data: itensSection },
+        ]
       );
-
-      if (!response.ok) {
-        throw new Error('Erro ao gerar PDF');
-      }
-
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `relatorio-lote-${lote.id}.pdf`;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
 
       toast.dismiss();
       toast.success('Relatório PDF baixado com sucesso!');
     } catch (error) {
       toast.dismiss();
-      toast.error('Erro ao gerar relatório PDF');
-      console.error('Erro:', error);
+      toast.error('Não foi possível gerar o PDF. Tente novamente.');
+      console.error('Erro ao gerar PDF:', error);
     }
   };
 
