@@ -1,4 +1,4 @@
-import { Home, Plus, Package, Users, MapPin, Settings, Menu } from 'lucide-react';
+import { Home, Plus, Package, Users, MapPin, FileText, Settings, Menu } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
 import { InstallButton } from '@/components/InstallButton';
 import { cn } from '@/lib/utils';
@@ -16,6 +16,7 @@ export const Navigation = () => {
     { to: '/lotes', icon: Package, label: 'Lotes' },
     { to: '/produtores', icon: Users, label: 'Produtores' },
     { to: '/fazendas', icon: MapPin, label: 'Fazendas' },
+    { to: '/relatorios', icon: FileText, label: 'Relatórios' },
     { to: '/configuracoes', icon: Settings, label: 'Configurações' },
   ];
 

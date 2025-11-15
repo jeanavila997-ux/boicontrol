@@ -12,6 +12,7 @@ import Lotes from "./pages/Lotes";
 import DetalhesLote from "./pages/DetalhesLote";
 import Produtores from "./pages/Produtores";
 import Fazendas from "./pages/Fazendas";
+import Relatorios from "./pages/Relatorios";
 import Configuracoes from "./pages/Configuracoes";
 import Offline from "./pages/Offline";
 import NotFound from "./pages/NotFound";
@@ -35,6 +36,7 @@ const App = () => (
               <Route path="/lotes/:id" element={<DetalhesLote />} />
               <Route path="/produtores" element={<Produtores />} />
               <Route path="/fazendas" element={<Fazendas />} />
+              <Route path="/relatorios" element={<Relatorios />} />
               <Route path="/configuracoes" element={<Configuracoes />} />
               <Route path="/offline" element={<Offline />} />
               <Route path="*" element={<NotFound />} />

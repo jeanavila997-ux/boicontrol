@@ -6,8 +6,15 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Plus, MapPin } from 'lucide-react';
+import { Plus, MapPin, FileSpreadsheet, Download } from 'lucide-react';
 import { toast } from 'sonner';
+import { exportToCSV, exportToExcel } from '@/utils/export';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 const Fazendas = () => {
   const { fazendas, addFazenda } = useApp();
@@ -29,6 +36,38 @@ const Fazendas = () => {
     setOpen(false);
   };
 
+  const handleExportCSV = () => {
+    try {
+      const dataToExport = fazendas.map(fazenda => ({
+        'ID': fazenda.id,
+        'Nome': fazenda.nome,
+        'Observações': fazenda.observacoes || '-',
+      }));
+      
+      exportToCSV('fazendas', dataToExport);
+      toast.success('Arquivo CSV gerado com sucesso!');
+    } catch (error) {
+      toast.error('Não foi possível gerar o arquivo. Tente novamente.');
+      console.error(error);
+    }
+  };
+
+  const handleExportExcel = () => {
+    try {
+      const dataToExport = fazendas.map(fazenda => ({
+        'ID': fazenda.id,
+        'Nome': fazenda.nome,
+        'Observações': fazenda.observacoes || '-',
+      }));
+      
+      exportToExcel('fazendas', 'Fazendas', dataToExport);
+      toast.success('Arquivo Excel gerado com sucesso!');
+    } catch (error) {
+      toast.error('Não foi possível gerar o arquivo. Tente novamente.');
+      console.error(error);
+    }
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex items-center justify-between mb-8">
@@ -37,7 +76,29 @@ const Fazendas = () => {
           <p className="text-muted-foreground">Gerencie as fazendas cadastradas</p>
         </div>
         
-        <Dialog open={open} onOpenChange={setOpen}>
+        <div className="flex gap-2">
+          {fazendas.length > 0 && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline">
+                  <Download className="mr-2 h-4 w-4" />
+                  Exportar
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem onClick={handleExportCSV}>
+                  <FileSpreadsheet className="mr-2 h-4 w-4" />
+                  Exportar CSV
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleExportExcel}>
+                  <FileSpreadsheet className="mr-2 h-4 w-4" />
+                  Exportar Excel
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
+          
+          <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button>
               <Plus className="mr-2 h-4 w-4" />
@@ -73,7 +134,8 @@ const Fazendas = () => {
               </Button>
             </form>
           </DialogContent>
-        </Dialog>
+          </Dialog>
+        </div>
       </div>
 
       {fazendas.length > 0 ? (
