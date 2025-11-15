@@ -56,14 +56,16 @@ const NovaCompra = () => {
     setCategoriaSelecionada(category);
   };
 
-  const resetItemForm = () => {
+  const resetItemForm = (manterCategoria = false) => {
     setQuantidade('');
     setPesoIndividual('');
     setPesoTotal('');
     setValorPorAnimal('');
     setValorTotal('');
     setObservacoes('');
-    setCategoriaSelecionada(null);
+    if (!manterCategoria) {
+      setCategoriaSelecionada(null);
+    }
   };
 
   const handleAddItem = () => {
@@ -104,10 +106,20 @@ const NovaCompra = () => {
     };
 
     setItensLote([...itensLote, novoItem]);
-    resetItemForm();
     
-    const mensagem = modo === 'individual' ? 'Animal adicionado' : 'Item adicionado ao lote';
-    toast.success(mensagem);
+    // No modo individual, mantém a categoria selecionada para próxima pesagem
+    if (modo === 'individual') {
+      resetItemForm(true);
+      toast.success('Animal adicionado! Pronto para o próximo.');
+      // Foca no campo de peso para agilizar
+      setTimeout(() => {
+        const pesoInput = document.getElementById('pesoIndividual');
+        if (pesoInput) pesoInput.focus();
+      }, 100);
+    } else {
+      resetItemForm(false);
+      toast.success('Item adicionado ao lote');
+    }
   };
 
   const handleFecharLote = () => {
@@ -276,8 +288,8 @@ const NovaCompra = () => {
       </div>
 
       {/* Dialog para adicionar item */}
-      <Dialog open={categoriaSelecionada !== null} onOpenChange={(open) => !open && resetItemForm()}>
-        <DialogContent className="max-w-md">
+      <Dialog open={categoriaSelecionada !== null} onOpenChange={(open) => !open && resetItemForm(false)}>
+        <DialogContent className="max-w-md" onPointerDownOutside={(e) => modo === 'individual' && e.preventDefault()}>
           <DialogHeader>
             <DialogTitle>
               {modo === 'individual' ? 'Pesar Animal - ' : 'Adicionar '}{categoriaSelecionada && categoryLabels[categoriaSelecionada]}
@@ -371,12 +383,18 @@ const NovaCompra = () => {
 
             <div className="flex gap-2">
               <Button onClick={handleAddItem} className="flex-1">
-                {modo === 'individual' ? 'Adicionar Animal' : 'Adicionar ao Lote'}
+                {modo === 'individual' ? 'Adicionar e Próximo' : 'Adicionar ao Lote'}
               </Button>
-              <Button onClick={resetItemForm} variant="outline">
-                Cancelar
+              <Button onClick={() => resetItemForm(false)} variant="outline">
+                {modo === 'individual' ? 'Fechar' : 'Cancelar'}
               </Button>
             </div>
+            
+            {modo === 'individual' && itensLote.length > 0 && (
+              <p className="text-sm text-muted-foreground text-center">
+                {itensLote.length} {itensLote.length === 1 ? 'animal pesado' : 'animais pesados'}
+              </p>
+            )}
           </div>
         </DialogContent>
       </Dialog>
