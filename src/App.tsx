@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AppProvider } from "@/contexts/AppContext";
 import { Navigation } from "@/components/Navigation";
+import { PWAUpdatePrompt } from "@/components/PWAUpdatePrompt";
 import Dashboard from "./pages/Dashboard";
 import NovaCompra from "./pages/NovaCompra";
 import Lotes from "./pages/Lotes";
@@ -12,6 +13,7 @@ import DetalhesLote from "./pages/DetalhesLote";
 import Produtores from "./pages/Produtores";
 import Fazendas from "./pages/Fazendas";
 import Configuracoes from "./pages/Configuracoes";
+import Offline from "./pages/Offline";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -21,6 +23,7 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
+      <PWAUpdatePrompt />
       <AppProvider>
         <BrowserRouter>
           <div className="min-h-screen bg-background">
@@ -33,6 +36,7 @@ const App = () => (
               <Route path="/produtores" element={<Produtores />} />
               <Route path="/fazendas" element={<Fazendas />} />
               <Route path="/configuracoes" element={<Configuracoes />} />
+              <Route path="/offline" element={<Offline />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </div>

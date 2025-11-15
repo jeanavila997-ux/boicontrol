@@ -1,5 +1,6 @@
 import { Home, Plus, Package, Users, MapPin, Settings } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
+import { InstallButton } from '@/components/InstallButton';
 import { cn } from '@/lib/utils';
 
 export const Navigation = () => {
@@ -23,7 +24,7 @@ export const Navigation = () => {
             <h1 className="text-xl font-bold text-foreground">BoiControl</h1>
           </div>
           
-          <div className="hidden md:flex items-center gap-1">
+          <div className="hidden md:flex items-center gap-2">
             {navItems.map((item) => (
               <NavLink
                 key={item.to}
@@ -36,6 +37,7 @@ export const Navigation = () => {
                 {item.label}
               </NavLink>
             ))}
+            <InstallButton />
           </div>
         </div>
       </div>
