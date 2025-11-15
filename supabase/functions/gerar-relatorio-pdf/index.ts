@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { PDFDocument, rgb, StandardFonts } from "https://cdn.skypack.dev/pdf-lib@1.17.1";
+import { PDFDocument, rgb, StandardFonts } from "https://esm.sh/pdf-lib@1.17.1";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -243,7 +243,7 @@ serve(async (req) => {
     const pdfBytes = await pdfDoc.save();
     console.log('PDF gerado com sucesso');
 
-    return new Response(pdfBytes, {
+    return new Response(new Uint8Array(pdfBytes), {
       headers: {
         ...corsHeaders,
         'Content-Type': 'application/pdf',
@@ -252,19 +252,9 @@ serve(async (req) => {
     });
   } catch (error) {
     console.error('Erro ao gerar PDF:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
     return new Response(
-      JSON.stringify({ error: error.message }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
-    );
-  }
-});
-  } catch (error) {
-    console.error('Erro ao gerar PDF:', error);
-    return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: errorMessage }),
       {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
