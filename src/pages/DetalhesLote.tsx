@@ -123,6 +123,7 @@ const DetalhesLote = () => {
             <TableHeader>
               <TableRow>
                 <TableHead>Categoria</TableHead>
+                <TableHead>Raça</TableHead>
                 <TableHead>Quantidade</TableHead>
                 <TableHead>Peso Individual</TableHead>
                 <TableHead>Peso Total</TableHead>
@@ -136,6 +137,9 @@ const DetalhesLote = () => {
                 <TableRow key={item.id}>
                   <TableCell className="font-medium">
                     {categoryLabels[item.categoria]}
+                  </TableCell>
+                  <TableCell>
+                    {item.raca || '-'}
                   </TableCell>
                   <TableCell>{item.quantidade}</TableCell>
                   <TableCell>
