@@ -16,8 +16,8 @@ export const LoteCard = ({ lote }: LoteCardProps) => {
   const fazenda = getFazendaById(lote.fazendaId);
   const produtor = getProdutorById(lote.produtorId);
   
-  const quantidadeTotal = lote.itens.reduce((acc, item) => acc + item.quantidade, 0);
-  const pesoTotal = lote.itens.reduce((acc, item) => acc + (item.pesoTotal || 0), 0);
+  const quantidadeTotal = lote.itens.length;
+  const pesoTotal = lote.itens.reduce((acc, item) => acc + item.peso, 0);
   const valorTotal = lote.itens.reduce((acc, item) => acc + (item.valorTotal || 0), 0);
 
   return (

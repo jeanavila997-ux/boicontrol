@@ -28,21 +28,24 @@ export interface Produtor {
 
 export interface ItemLote {
   id: string;
+  idAnimal: number;
+  sexo: 'macho' | 'femea';
   categoria: AnimalCategory;
   raca?: Raca;
-  quantidade: number;
-  pesoIndividual?: number;
-  pesoTotal?: number;
-  valorPorAnimal?: number;
-  valorTotal?: number;
+  peso: number;
+  valorTotal: number;
   observacoes?: string;
 }
 
 export interface Lote {
   id: string;
   data: string;
+  nomeLote: string;
   fazendaId: string;
   produtorId: string;
+  origem: string;
+  valorPorKgMacho: number;
+  valorPorKgFemea: number;
   itens: ItemLote[];
 }
 
