@@ -11,7 +11,7 @@ const Dashboard = () => {
 
   const totalLotes = lotes.length;
   const totalAnimais = lotes.reduce((acc, lote) => {
-    return acc + lote.itens.reduce((sum, item) => sum + item.quantidade, 0);
+    return acc + lote.itens.length;
   }, 0);
 
   const ultimosLotes = lotes.slice(0, 5);

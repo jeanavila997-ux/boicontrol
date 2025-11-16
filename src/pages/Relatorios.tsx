@@ -13,12 +13,13 @@ const Relatorios = () => {
       // Exportar Lotes
       const lotesData = lotes.map(lote => ({
         'ID': lote.id,
+        'Nome Lote': lote.nomeLote || '-',
         'Data': new Date(lote.data).toLocaleDateString('pt-BR'),
         'Fazenda': getFazendaById(lote.fazendaId)?.nome || 'N/A',
         'Produtor': getProdutorById(lote.produtorId)?.nome || 'N/A',
-        'Total Animais': lote.itens.reduce((acc, item) => acc + item.quantidade, 0),
-        'Peso Total (kg)': lote.itens.reduce((acc, item) => acc + (item.pesoTotal || 0), 0).toFixed(0),
-        'Valor Total': lote.itens.reduce((acc, item) => acc + (item.valorTotal || 0), 0).toFixed(2),
+        'Total Animais': lote.itens.length,
+        'Peso Total (kg)': lote.itens.reduce((acc, item) => acc + item.peso, 0).toFixed(0),
+        'Valor Total': lote.itens.reduce((acc, item) => acc + item.valorTotal, 0).toFixed(2),
       }));
       exportToCSV('lotes', lotesData);
 
@@ -28,14 +29,13 @@ const Relatorios = () => {
         lote.itens.forEach(item => {
           itensData.push({
             'Lote ID': lote.id,
+            'ID Animal': item.idAnimal,
+            'Sexo': item.sexo === 'macho' ? 'M' : 'F',
             'Data Lote': new Date(lote.data).toLocaleDateString('pt-BR'),
             'Categoria': item.categoria,
             'Raça': item.raca || '-',
-            'Quantidade': item.quantidade,
-            'Peso Individual (kg)': item.pesoIndividual || '-',
-            'Peso Total (kg)': item.pesoTotal?.toFixed(0) || '-',
-            'Valor/Animal': item.valorPorAnimal?.toFixed(2) || '-',
-            'Valor Total': item.valorTotal?.toFixed(2) || '-',
+            'Peso (kg)': item.peso.toFixed(0),
+            'Valor Total': item.valorTotal.toFixed(2),
             'Observações': item.observacoes || '-',
           });
         });
@@ -70,28 +70,27 @@ const Relatorios = () => {
       // Preparar dados de Lotes
       const lotesData = lotes.map(lote => ({
         'ID': lote.id,
+        'Nome Lote': lote.nomeLote || '-',
         'Data': new Date(lote.data).toLocaleDateString('pt-BR'),
         'Fazenda': getFazendaById(lote.fazendaId)?.nome || 'N/A',
         'Produtor': getProdutorById(lote.produtorId)?.nome || 'N/A',
-        'Total Animais': lote.itens.reduce((acc, item) => acc + item.quantidade, 0),
-        'Peso Total (kg)': lote.itens.reduce((acc, item) => acc + (item.pesoTotal || 0), 0).toFixed(0),
-        'Valor Total': lote.itens.reduce((acc, item) => acc + (item.valorTotal || 0), 0).toFixed(2),
+        'Total Animais': lote.itens.length,
+        'Peso Total (kg)': lote.itens.reduce((acc, item) => acc + item.peso, 0).toFixed(0),
+        'Valor Total': lote.itens.reduce((acc, item) => acc + item.valorTotal, 0).toFixed(2),
       }));
 
-      // Preparar dados de Itens de Lote
       const itensData: any[] = [];
       lotes.forEach(lote => {
         lote.itens.forEach(item => {
           itensData.push({
             'Lote ID': lote.id,
+            'ID Animal': item.idAnimal,
+            'Sexo': item.sexo === 'macho' ? 'M' : 'F',
             'Data Lote': new Date(lote.data).toLocaleDateString('pt-BR'),
             'Categoria': item.categoria,
             'Raça': item.raca || '-',
-            'Quantidade': item.quantidade,
-            'Peso Individual (kg)': item.pesoIndividual || '-',
-            'Peso Total (kg)': item.pesoTotal?.toFixed(0) || '-',
-            'Valor/Animal': item.valorPorAnimal?.toFixed(2) || '-',
-            'Valor Total': item.valorTotal?.toFixed(2) || '-',
+            'Peso (kg)': item.peso.toFixed(0),
+            'Valor Total': item.valorTotal.toFixed(2),
             'Observações': item.observacoes || '-',
           });
         });

@@ -20,12 +20,14 @@ const Lotes = () => {
     try {
       const dataToExport = lotes.map(lote => ({
         'ID': lote.id,
+        'Nome Lote': lote.nomeLote || '-',
         'Data': new Date(lote.data).toLocaleDateString('pt-BR'),
         'Fazenda': getFazendaById(lote.fazendaId)?.nome || 'N/A',
         'Produtor': getProdutorById(lote.produtorId)?.nome || 'N/A',
-        'Total Animais': lote.itens.reduce((acc, item) => acc + item.quantidade, 0),
-        'Peso Total (kg)': lote.itens.reduce((acc, item) => acc + (item.pesoTotal || 0), 0).toFixed(0),
-        'Valor Total': lote.itens.reduce((acc, item) => acc + (item.valorTotal || 0), 0).toFixed(2),
+        'Origem': lote.origem || '-',
+        'Total Animais': lote.itens.length,
+        'Peso Total (kg)': lote.itens.reduce((acc, item) => acc + item.peso, 0).toFixed(0),
+        'Valor Total': lote.itens.reduce((acc, item) => acc + item.valorTotal, 0).toFixed(2),
       }));
       
       exportToCSV('lotes', dataToExport);
@@ -40,12 +42,14 @@ const Lotes = () => {
     try {
       const dataToExport = lotes.map(lote => ({
         'ID': lote.id,
+        'Nome Lote': lote.nomeLote || '-',
         'Data': new Date(lote.data).toLocaleDateString('pt-BR'),
         'Fazenda': getFazendaById(lote.fazendaId)?.nome || 'N/A',
         'Produtor': getProdutorById(lote.produtorId)?.nome || 'N/A',
-        'Total Animais': lote.itens.reduce((acc, item) => acc + item.quantidade, 0),
-        'Peso Total (kg)': lote.itens.reduce((acc, item) => acc + (item.pesoTotal || 0), 0).toFixed(0),
-        'Valor Total': lote.itens.reduce((acc, item) => acc + (item.valorTotal || 0), 0).toFixed(2),
+        'Origem': lote.origem || '-',
+        'Total Animais': lote.itens.length,
+        'Peso Total (kg)': lote.itens.reduce((acc, item) => acc + item.peso, 0).toFixed(0),
+        'Valor Total': lote.itens.reduce((acc, item) => acc + item.valorTotal, 0).toFixed(2),
       }));
       
       exportToExcel('lotes', 'Lotes', dataToExport);
@@ -60,12 +64,14 @@ const Lotes = () => {
     try {
       const dataToExport = lotes.map(lote => ({
         'ID': lote.id,
+        'Nome Lote': lote.nomeLote || '-',
         'Data': new Date(lote.data).toLocaleDateString('pt-BR'),
         'Fazenda': getFazendaById(lote.fazendaId)?.nome || 'N/A',
         'Produtor': getProdutorById(lote.produtorId)?.nome || 'N/A',
-        'Total Animais': lote.itens.reduce((acc, item) => acc + item.quantidade, 0),
-        'Peso Total (kg)': lote.itens.reduce((acc, item) => acc + (item.pesoTotal || 0), 0).toFixed(0),
-        'Valor Total': lote.itens.reduce((acc, item) => acc + (item.valorTotal || 0), 0).toFixed(2),
+        'Origem': lote.origem || '-',
+        'Total Animais': lote.itens.length,
+        'Peso Total (kg)': lote.itens.reduce((acc, item) => acc + item.peso, 0).toFixed(0),
+        'Valor Total': lote.itens.reduce((acc, item) => acc + item.valorTotal, 0).toFixed(2),
       }));
       
       exportToPDF('lotes', 'Relatório de Lotes', dataToExport);

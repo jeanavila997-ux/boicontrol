@@ -137,27 +137,31 @@ export const initializeMockData = async () => {
     await addLote({
       id: '1',
       data: '2025-11-10',
+      nomeLote: 'Lote Exemplo 01',
       fazendaId: '1',
       produtorId: '1',
+      origem: 'Compra Direta',
+      valorPorKgMacho: 18.50,
+      valorPorKgFemea: 17.00,
       itens: [
         {
           id: '1',
+          idAnimal: 1,
+          sexo: 'macho',
           categoria: 'bezerro',
-          quantidade: 10,
-          pesoIndividual: 180,
-          pesoTotal: 1800,
-          valorPorAnimal: 2500,
-          valorTotal: 25000,
-          observacoes: 'Animais de boa qualidade'
+          raca: 'NELORE',
+          peso: 180,
+          valorTotal: 3330,
+          observacoes: 'Animal de boa qualidade'
         },
         {
           id: '2',
+          idAnimal: 2,
+          sexo: 'femea',
           categoria: 'bezerra',
-          quantidade: 8,
-          pesoIndividual: 160,
-          pesoTotal: 1280,
-          valorPorAnimal: 2200,
-          valorTotal: 17600,
+          raca: 'NELORE',
+          peso: 160,
+          valorTotal: 2720,
         }
       ]
     });
