@@ -127,11 +127,11 @@ const Relatorios = () => {
   };
 
   const totalAnimais = lotes.reduce((acc, lote) => 
-    acc + lote.itens.reduce((sum, item) => sum + item.quantidade, 0), 0
+    acc + lote.itens.length, 0
   );
 
   const pesoTotal = lotes.reduce((acc, lote) => 
-    acc + lote.itens.reduce((sum, item) => sum + (item.pesoTotal || 0), 0), 0
+    acc + lote.itens.reduce((sum, item) => sum + item.peso, 0), 0
   );
 
   const valorTotal = lotes.reduce((acc, lote) => 
