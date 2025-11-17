@@ -134,6 +134,10 @@ export const exportCustomPDF = (
         styles: { fontSize: 8, cellPadding: 2 },
         headStyles: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold' },
         alternateRowStyles: { fillColor: [245, 245, 245] },
+        margin: { top: 10, right: 10, bottom: 10, left: 10 },
+        pageBreak: 'auto',
+        rowPageBreak: 'avoid',
+        showHead: 'everyPage',
       });
       // @ts-ignore - propriedade adicionada por autotable
       currentY = doc.lastAutoTable.finalY + 10;
