@@ -6,9 +6,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Plus, MapPin, FileSpreadsheet, Download } from 'lucide-react';
+import { Plus, MapPin, FileSpreadsheet, Download, Pencil } from 'lucide-react';
 import { toast } from 'sonner';
 import { exportToCSV, exportToExcel } from '@/utils/export';
+import { Fazenda } from '@/types';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,10 +18,12 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 const Fazendas = () => {
-  const { fazendas, addFazenda } = useApp();
+  const { fazendas, addFazenda, updateFazenda } = useApp();
   const [open, setOpen] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false);
   const [nome, setNome] = useState('');
   const [observacoes, setObservacoes] = useState('');
+  const [fazendaEditando, setFazendaEditando] = useState<Fazenda | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,6 +37,35 @@ const Fazendas = () => {
     setNome('');
     setObservacoes('');
     setOpen(false);
+  };
+  
+  const handleEdit = (fazenda: Fazenda) => {
+    setFazendaEditando(fazenda);
+    setNome(fazenda.nome);
+    setObservacoes(fazenda.observacoes || '');
+    setOpenEdit(true);
+  };
+  
+  const handleSubmitEdit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!fazendaEditando) return;
+    
+    if (!nome) {
+      toast.error('Nome é obrigatório');
+      return;
+    }
+    
+    updateFazenda({
+      ...fazendaEditando,
+      nome,
+      observacoes: observacoes || undefined,
+    });
+    
+    toast.success('Fazenda atualizada com sucesso');
+    setNome('');
+    setObservacoes('');
+    setFazendaEditando(null);
+    setOpenEdit(false);
   };
 
   const handleExportCSV = () => {

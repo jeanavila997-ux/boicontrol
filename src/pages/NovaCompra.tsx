@@ -22,7 +22,7 @@ const origemOptions = [
 ];
 
 const NovaCompra = () => {
-  const { fazendas, produtores, addLote, addProdutor } = useApp();
+  const { fazendas, produtores, addLote, addProdutor, updateLote } = useApp();
   const navigate = useNavigate();
   
   // Informações do Lote
@@ -40,6 +40,10 @@ const NovaCompra = () => {
   const [proximoId, setProximoId] = useState<number>(1);
   const [showTerminal, setShowTerminal] = useState<boolean>(false);
   const [showAddProdutor, setShowAddProdutor] = useState<boolean>(false);
+  
+  // Edição de animal
+  const [showEditAnimal, setShowEditAnimal] = useState<boolean>(false);
+  const [animalEditando, setAnimalEditando] = useState<ItemLote | null>(null);
   
   // Campos do terminal
   const [idAnimal, setIdAnimal] = useState<string>('1');
@@ -187,6 +191,49 @@ const NovaCompra = () => {
   const removeItem = (itemId: string) => {
     setItensLote(itensLote.filter(item => item.id !== itemId));
     toast.success('Animal removido');
+  };
+  
+  const handleEditAnimal = (item: ItemLote) => {
+    setAnimalEditando(item);
+    setIdAnimal(item.idAnimal.toString());
+    setSexo(item.sexo);
+    setRaca(item.raca || 'NELORE');
+    setPeso(item.peso.toString());
+    setObservacoes(item.observacoes || '');
+    setShowEditAnimal(true);
+  };
+  
+  const handleSaveEditAnimal = () => {
+    if (!animalEditando) return;
+    
+    if (!peso || !idAnimal) {
+      toast.error('Preencha ID e Peso do animal');
+      return;
+    }
+    
+    const pesoNum = parseFloat(peso);
+    const valorPorKg = sexo === 'macho' ? parseFloat(valorPorKgMacho) : parseFloat(valorPorKgFemea);
+    
+    const animalAtualizado: ItemLote = {
+      ...animalEditando,
+      idAnimal: parseInt(idAnimal),
+      sexo,
+      categoria: sexo === 'macho' ? 'garrote' : 'bezerra',
+      raca,
+      peso: pesoNum,
+      valorTotal: pesoNum * valorPorKg,
+      observacoes: observacoes || undefined,
+    };
+    
+    setItensLote(itensLote.map(item => 
+      item.id === animalEditando.id ? animalAtualizado : item
+    ));
+    
+    toast.success('Animal atualizado!');
+    setShowEditAnimal(false);
+    setAnimalEditando(null);
+    setPeso('');
+    setObservacoes('');
   };
   
   const handleAddProdutor = async () => {
@@ -386,15 +433,26 @@ const NovaCompra = () => {
                             <TableCell>{item.raca}</TableCell>
                             <TableCell>{item.peso.toFixed(0)}</TableCell>
                             <TableCell>R$ {item.valorTotal.toFixed(2)}</TableCell>
-                            <TableCell>
+                          <TableCell>
+                            <div className="flex gap-1">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => handleEditAnimal(item)}
+                                title="Editar animal"
+                              >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
+                              </Button>
                               <Button
                                 variant="ghost"
                                 size="icon"
                                 onClick={() => removeItem(item.id)}
+                                title="Excluir animal"
                               >
                                 <Trash2 className="h-4 w-4 text-destructive" />
                               </Button>
-                            </TableCell>
+                            </div>
+                          </TableCell>
                           </TableRow>
                         ))}
                       </TableBody>
@@ -558,6 +616,110 @@ const NovaCompra = () => {
             <div className="text-sm text-muted-foreground text-center">
               <p>Use ENTER para navegar entre os campos</p>
               <p>Teclas M e F para selecionar sexo rapidamente</p>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog Editar Animal */}
+      <Dialog open={showEditAnimal} onOpenChange={setShowEditAnimal}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-2xl">Editar Animal</DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-6 py-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="editIdAnimal" className="text-base">ID do Animal</Label>
+                <Input
+                  id="editIdAnimal"
+                  type="number"
+                  className="h-12 text-lg"
+                  value={idAnimal}
+                  onChange={(e) => setIdAnimal(e.target.value)}
+                />
+              </div>
+              
+              <div>
+                <Label className="text-base">Sexo</Label>
+                <div className="grid grid-cols-2 gap-2 mt-1">
+                  <Button
+                    type="button"
+                    variant={sexo === 'macho' ? 'default' : 'outline'}
+                    className="h-12 text-lg"
+                    onClick={() => setSexo('macho')}
+                  >
+                    Macho
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={sexo === 'femea' ? 'default' : 'outline'}
+                    className="h-12 text-lg"
+                    onClick={() => setSexo('femea')}
+                  >
+                    Fêmea
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <Label htmlFor="editRaca" className="text-base">Raça</Label>
+              <Select value={raca} onValueChange={(val: Raca) => setRaca(val)}>
+                <SelectTrigger id="editRaca" className="h-12 text-lg">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="NELORE">Nelore</SelectItem>
+                  <SelectItem value="CRUZADOS">Cruzados</SelectItem>
+                  <SelectItem value="ABERDEEN">Aberdeen</SelectItem>
+                  <SelectItem value="ANGUS">Angus</SelectItem>
+                  <SelectItem value="SENEPOL">Senepol</SelectItem>
+                  <SelectItem value="OUTROS">Outros</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label htmlFor="editPeso" className="text-base">Peso (kg)</Label>
+              <Input
+                id="editPeso"
+                type="number"
+                step="0.1"
+                className="h-12 text-lg"
+                value={peso}
+                onChange={(e) => setPeso(e.target.value)}
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="editObs" className="text-base">Observações (opcional)</Label>
+              <Textarea
+                id="editObs"
+                className="text-base"
+                value={observacoes}
+                onChange={(e) => setObservacoes(e.target.value)}
+                rows={3}
+              />
+            </div>
+
+            <div className="flex gap-2 justify-end">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setShowEditAnimal(false);
+                  setAnimalEditando(null);
+                  setPeso('');
+                  setObservacoes('');
+                }}
+              >
+                Cancelar
+              </Button>
+              <Button onClick={handleSaveEditAnimal}>
+                Salvar Alterações
+              </Button>
             </div>
           </div>
         </DialogContent>

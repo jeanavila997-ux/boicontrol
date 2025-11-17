@@ -1,10 +1,15 @@
+import { useState } from 'react';
 import { useApp } from '@/contexts/AppContext';
 import { LoteCard } from '@/components/LoteCard';
-import { Package, FileSpreadsheet, FileText, Download } from 'lucide-react';
+import { Package, FileSpreadsheet, FileText, Download, Filter, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { exportToCSV, exportToExcel, exportToPDF } from '@/utils/export';
 import { toast } from 'sonner';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Card } from '@/components/ui/card';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,6 +20,55 @@ import {
 const Lotes = () => {
   const { lotes, getFazendaById, getProdutorById } = useApp();
   const navigate = useNavigate();
+  
+  // Estados para filtros
+  const [filtroDataInicio, setFiltroDataInicio] = useState('');
+  const [filtroDataFim, setFiltroDataFim] = useState('');
+  const [filtroFazenda, setFiltroFazenda] = useState('');
+  const [filtroProdutor, setFiltroProdutor] = useState('');
+  const [filtroOrigem, setFiltroOrigem] = useState('');
+  const [filtroBusca, setFiltroBusca] = useState('');
+  const [mostrarFiltros, setMostrarFiltros] = useState(false);
+  
+  // Aplicar filtros
+  const lotesFiltrados = lotes.filter(lote => {
+    // Filtro de data
+    if (filtroDataInicio && new Date(lote.data) < new Date(filtroDataInicio)) return false;
+    if (filtroDataFim && new Date(lote.data) > new Date(filtroDataFim)) return false;
+    
+    // Filtro de fazenda
+    if (filtroFazenda && lote.fazendaId !== filtroFazenda) return false;
+    
+    // Filtro de produtor
+    if (filtroProdutor && lote.produtorId !== filtroProdutor) return false;
+    
+    // Filtro de origem
+    if (filtroOrigem && lote.origem !== filtroOrigem) return false;
+    
+    // Busca livre
+    if (filtroBusca) {
+      const busca = filtroBusca.toLowerCase();
+      const nomeLote = lote.nomeLote?.toLowerCase() || '';
+      const fazenda = getFazendaById(lote.fazendaId)?.nome.toLowerCase() || '';
+      const produtor = getProdutorById(lote.produtorId)?.nome.toLowerCase() || '';
+      const origem = lote.origem?.toLowerCase() || '';
+      
+      if (!nomeLote.includes(busca) && !fazenda.includes(busca) && !produtor.includes(busca) && !origem.includes(busca)) {
+        return false;
+      }
+    }
+    
+    return true;
+  });
+  
+  const limparFiltros = () => {
+    setFiltroDataInicio('');
+    setFiltroDataFim('');
+    setFiltroFazenda('');
+    setFiltroProdutor('');
+    setFiltroOrigem('');
+    setFiltroBusca('');
+  };
 
   const handleExportCSV = () => {
     try {

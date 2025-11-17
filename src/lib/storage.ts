@@ -70,6 +70,11 @@ export const getFazendaById = async (id: string): Promise<Fazenda | undefined> =
   return db.get('fazendas', id);
 };
 
+export const updateFazenda = async (fazenda: Fazenda): Promise<void> => {
+  const db = await initDB();
+  await db.put('fazendas', fazenda);
+};
+
 // Produtores
 export const getAllProdutores = async (): Promise<Produtor[]> => {
   const db = await initDB();
@@ -84,6 +89,11 @@ export const addProdutor = async (produtor: Produtor): Promise<void> => {
 export const getProdutorById = async (id: string): Promise<Produtor | undefined> => {
   const db = await initDB();
   return db.get('produtores', id);
+};
+
+export const updateProdutor = async (produtor: Produtor): Promise<void> => {
+  const db = await initDB();
+  await db.put('produtores', produtor);
 };
 
 // Lotes
@@ -102,6 +112,11 @@ export const addLote = async (lote: Lote): Promise<void> => {
 export const getLoteById = async (id: string): Promise<Lote | undefined> => {
   const db = await initDB();
   return db.get('lotes', id);
+};
+
+export const updateLote = async (lote: Lote): Promise<void> => {
+  const db = await initDB();
+  await db.put('lotes', lote);
 };
 
 // Configurações
