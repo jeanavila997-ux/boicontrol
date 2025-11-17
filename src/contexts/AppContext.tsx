@@ -10,6 +10,9 @@ interface AppContextType {
   addFazenda: (fazenda: Omit<Fazenda, 'id'>) => void;
   addProdutor: (produtor: Omit<Produtor, 'id'>) => void;
   addLote: (lote: Omit<Lote, 'id'>) => void;
+  updateFazenda: (fazenda: Fazenda) => void;
+  updateProdutor: (produtor: Produtor) => void;
+  updateLote: (lote: Lote) => void;
   updateConfiguracoes: (config: Partial<Configuracoes>) => void;
   getLoteById: (id: string) => Lote | undefined;
   getFazendaById: (id: string) => Fazenda | undefined;
@@ -83,6 +86,21 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     setLotes([newLote, ...lotes]);
   };
 
+  const updateFazenda = async (fazenda: Fazenda) => {
+    await storage.updateFazenda(fazenda);
+    setFazendas(fazendas.map(f => f.id === fazenda.id ? fazenda : f));
+  };
+
+  const updateProdutor = async (produtor: Produtor) => {
+    await storage.updateProdutor(produtor);
+    setProdutores(produtores.map(p => p.id === produtor.id ? produtor : p));
+  };
+
+  const updateLote = async (lote: Lote) => {
+    await storage.updateLote(lote);
+    setLotes(lotes.map(l => l.id === lote.id ? lote : l));
+  };
+
   const updateConfiguracoes = async (config: Partial<Configuracoes>) => {
     const newConfig = { ...configuracoes, ...config };
     await storage.saveConfiguracoes(newConfig);
@@ -114,6 +132,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         addFazenda,
         addProdutor,
         addLote,
+        updateFazenda,
+        updateProdutor,
+        updateLote,
         updateConfiguracoes,
         getLoteById,
         getFazendaById,

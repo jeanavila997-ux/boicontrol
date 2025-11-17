@@ -6,9 +6,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Plus, User, FileSpreadsheet, Download } from 'lucide-react';
+import { Plus, User, FileSpreadsheet, Download, Pencil } from 'lucide-react';
 import { toast } from 'sonner';
 import { exportToCSV, exportToExcel } from '@/utils/export';
+import { Produtor } from '@/types';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,10 +18,12 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 const Produtores = () => {
-  const { produtores, addProdutor } = useApp();
+  const { produtores, addProdutor, updateProdutor } = useApp();
   const [open, setOpen] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false);
   const [nome, setNome] = useState('');
   const [observacoes, setObservacoes] = useState('');
+  const [produtorEditando, setProdutorEditando] = useState<Produtor | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,6 +37,35 @@ const Produtores = () => {
     setNome('');
     setObservacoes('');
     setOpen(false);
+  };
+  
+  const handleEdit = (produtor: Produtor) => {
+    setProdutorEditando(produtor);
+    setNome(produtor.nome);
+    setObservacoes(produtor.observacoes || '');
+    setOpenEdit(true);
+  };
+  
+  const handleSubmitEdit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!produtorEditando) return;
+    
+    if (!nome) {
+      toast.error('Nome é obrigatório');
+      return;
+    }
+    
+    updateProdutor({
+      ...produtorEditando,
+      nome,
+      observacoes: observacoes || undefined,
+    });
+    
+    toast.success('Produtor atualizado com sucesso');
+    setNome('');
+    setObservacoes('');
+    setProdutorEditando(null);
+    setOpenEdit(false);
   };
 
   const handleExportCSV = () => {
