@@ -57,8 +57,8 @@ const DetalhesLote = () => {
         'Sexo': item.sexo === 'macho' ? 'M' : 'F',
         'Categoria': categoryLabels[item.categoria] || item.categoria,
         'Raça': item.raca || '-',
-        'Peso (kg)': item.peso.toFixed(0),
-        'Valor Total (R$)': item.valorTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 }),
+        'Peso (kg)': item.peso?.toFixed(0) || '0',
+        'Valor Total (R$)': (item.valorTotal || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 }),
       }));
       exportCustomPDF(`relatorio-lote-${lote.id}`, 'Relatório de Compra de Gado', [
         { subtitle: 'Informações do Lote', data: infoSection, headers: ['Campo', 'Valor'] },
@@ -151,8 +151,8 @@ const DetalhesLote = () => {
                   </TableCell>
                   <TableCell>{categoryLabels[item.categoria]}</TableCell>
                   <TableCell>{item.raca || '-'}</TableCell>
-                  <TableCell>{item.peso.toFixed(0)} kg</TableCell>
-                  <TableCell className="font-medium text-success">R$ {item.valorTotal.toLocaleString('pt-BR')}</TableCell>
+                  <TableCell>{item.peso?.toFixed(0) || '0'} kg</TableCell>
+                  <TableCell className="font-medium text-success">R$ {(item.valorTotal || 0).toLocaleString('pt-BR')}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
