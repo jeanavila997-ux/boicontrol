@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { useApp } from '@/contexts/AppContext';
 import { ItemLote, Raca } from '@/types';
-import { Trash2, Plus, CheckCircle, DollarSign } from 'lucide-react';
+import { Trash2, Plus, CheckCircle, DollarSign, Lock, Unlock, Pencil } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
@@ -39,6 +39,9 @@ const NovaCompra = () => {
   // Precificação individual
   const [precificacaoIndividual, setPrecificacaoIndividual] = useState<boolean>(false);
   const [valorTotalIndividual, setValorTotalIndividual] = useState<string>('');
+  
+  // Travamento de preço
+  const [precoTravado, setPrecoTravado] = useState<boolean>(false);
   
   // Terminal de Pesagem
   const [itensLote, setItensLote] = useState<ItemLote[]>([]);
@@ -435,29 +438,73 @@ const NovaCompra = () => {
               </div>
 
               {!precificacaoIndividual && (
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="valorMacho">Valor por Kg (Macho) *</Label>
-                    <Input
-                      id="valorMacho"
-                      type="number"
-                      step="0.01"
-                      placeholder="R$ 0,00"
-                      value={valorPorKgMacho}
-                      onChange={(e) => setValorPorKgMacho(e.target.value)}
-                    />
+                <div className="space-y-3">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="valorMacho">Valor por Kg (Macho) *</Label>
+                      <Input
+                        id="valorMacho"
+                        type="number"
+                        step="0.01"
+                        placeholder="R$ 0,00"
+                        value={valorPorKgMacho}
+                        onChange={(e) => setValorPorKgMacho(e.target.value)}
+                        disabled={precoTravado}
+                        className={precoTravado ? 'bg-muted cursor-not-allowed' : ''}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="valorFemea">Valor por Kg (Fêmea) *</Label>
+                      <Input
+                        id="valorFemea"
+                        type="number"
+                        step="0.01"
+                        placeholder="R$ 0,00"
+                        value={valorPorKgFemea}
+                        onChange={(e) => setValorPorKgFemea(e.target.value)}
+                        disabled={precoTravado}
+                        className={precoTravado ? 'bg-muted cursor-not-allowed' : ''}
+                      />
+                    </div>
                   </div>
-                  <div>
-                    <Label htmlFor="valorFemea">Valor por Kg (Fêmea) *</Label>
-                    <Input
-                      id="valorFemea"
-                      type="number"
-                      step="0.01"
-                      placeholder="R$ 0,00"
-                      value={valorPorKgFemea}
-                      onChange={(e) => setValorPorKgFemea(e.target.value)}
-                    />
-                  </div>
+                  
+                  {/* Botão de travar preço */}
+                  {(valorPorKgMacho || valorPorKgFemea) && (
+                    <Button
+                      type="button"
+                      variant={precoTravado ? 'default' : 'outline'}
+                      className={`w-full h-12 transition-all ${
+                        precoTravado 
+                          ? 'bg-green-600 hover:bg-green-700 text-white' 
+                          : 'border-dashed'
+                      }`}
+                      onClick={() => {
+                        if (!precoTravado && (!valorPorKgMacho || !valorPorKgFemea)) {
+                          toast.error('Preencha os valores por kg antes de travar');
+                          return;
+                        }
+                        setPrecoTravado(!precoTravado);
+                        toast.success(
+                          precoTravado 
+                            ? 'Preço destravado - pode editar os valores' 
+                            : `Preço travado: M R$${valorPorKgMacho}/kg | F R$${valorPorKgFemea}/kg`
+                        );
+                      }}
+                    >
+                      {precoTravado ? (
+                        <>
+                          <Lock className="mr-2 h-5 w-5" />
+                          Preço Travado: M R${valorPorKgMacho}/kg | F R${valorPorKgFemea}/kg
+                          <Pencil className="ml-2 h-4 w-4 opacity-70" />
+                        </>
+                      ) : (
+                        <>
+                          <Unlock className="mr-2 h-5 w-5" />
+                          Clique para Travar Preço
+                        </>
+                      )}
+                    </Button>
+                  )}
                 </div>
               )}
 
