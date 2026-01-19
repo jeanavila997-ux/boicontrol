@@ -290,6 +290,44 @@ const NovaCompra = () => {
   const totalPeso = itensLote.reduce((acc, item) => acc + item.peso, 0);
   const totalValor = itensLote.reduce((acc, item) => acc + item.valorTotal, 0);
   
+  // Calcular estatísticas por categoria (sexo + raça)
+  const getEstatisticasCategoria = () => {
+    const animaisMesmaSexoRaca = itensLote.filter(
+      item => item.sexo === sexo && item.raca === raca
+    );
+    
+    const animaisMesmoSexo = itensLote.filter(item => item.sexo === sexo);
+    
+    if (animaisMesmaSexoRaca.length === 0 && animaisMesmoSexo.length === 0) {
+      return null;
+    }
+    
+    const pesoTotalSexoRaca = animaisMesmaSexoRaca.reduce((acc, item) => acc + item.peso, 0);
+    const pesoMedioSexoRaca = animaisMesmaSexoRaca.length > 0 
+      ? pesoTotalSexoRaca / animaisMesmaSexoRaca.length 
+      : 0;
+    
+    const pesoTotalSexo = animaisMesmoSexo.reduce((acc, item) => acc + item.peso, 0);
+    const pesoMedioSexo = animaisMesmoSexo.length > 0 
+      ? pesoTotalSexo / animaisMesmoSexo.length 
+      : 0;
+    
+    return {
+      sexoRaca: {
+        quantidade: animaisMesmaSexoRaca.length,
+        pesoMedio: pesoMedioSexoRaca,
+        pesoTotal: pesoTotalSexoRaca,
+      },
+      sexo: {
+        quantidade: animaisMesmoSexo.length,
+        pesoMedio: pesoMedioSexo,
+        pesoTotal: pesoTotalSexo,
+      }
+    };
+  };
+  
+  const estatisticasCategoria = getEstatisticasCategoria();
+  
   return (
     <div className="container mx-auto p-4 md:p-6 max-w-7xl">
       <div className="mb-6">
@@ -658,6 +696,62 @@ const NovaCompra = () => {
                 <p className="text-xs text-muted-foreground mt-1">
                   Insira o valor negociado por cabeça
                 </p>
+              </div>
+            )}
+
+            {/* Estatísticas de peso médio por categoria */}
+            {estatisticasCategoria && (
+              <div className="p-4 border rounded-lg bg-muted/50 space-y-3">
+                <div className="flex items-center gap-2 text-sm font-medium text-foreground">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.376 3.622a1 1 0 0 1 3.002 3.002L7.368 18.635a2 2 0 0 1-.855.506l-2.872.838a.5.5 0 0 1-.62-.62l.838-2.872a2 2 0 0 1 .506-.854z"/></svg>
+                  Estatísticas da Pesagem
+                </div>
+                
+                {estatisticasCategoria.sexoRaca.quantidade > 0 && (
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-muted-foreground">
+                      {sexo === 'macho' ? 'Machos' : 'Fêmeas'} {raca}:
+                    </span>
+                    <div className="text-right">
+                      <span className="font-semibold text-primary">
+                        {estatisticasCategoria.sexoRaca.pesoMedio.toFixed(1)} kg
+                      </span>
+                      <span className="text-xs text-muted-foreground ml-1">
+                        (média de {estatisticasCategoria.sexoRaca.quantidade})
+                      </span>
+                    </div>
+                  </div>
+                )}
+                
+                {estatisticasCategoria.sexo.quantidade > 0 && (
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-muted-foreground">
+                      Todos os {sexo === 'macho' ? 'Machos' : 'Fêmeas'}:
+                    </span>
+                    <div className="text-right">
+                      <span className="font-semibold">
+                        {estatisticasCategoria.sexo.pesoMedio.toFixed(1)} kg
+                      </span>
+                      <span className="text-xs text-muted-foreground ml-1">
+                        (média de {estatisticasCategoria.sexo.quantidade})
+                      </span>
+                    </div>
+                  </div>
+                )}
+                
+                {itensLote.length > 0 && (
+                  <div className="flex justify-between items-center text-sm pt-2 border-t">
+                    <span className="text-muted-foreground">Total Geral:</span>
+                    <div className="text-right">
+                      <span className="font-semibold">
+                        {(totalPeso / totalAnimais).toFixed(1)} kg
+                      </span>
+                      <span className="text-xs text-muted-foreground ml-1">
+                        (média de {totalAnimais})
+                      </span>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
