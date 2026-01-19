@@ -7,7 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { useApp } from '@/contexts/AppContext';
 import { ItemLote, Raca } from '@/types';
-import { Trash2, Plus, CheckCircle } from 'lucide-react';
+import { Trash2, Plus, CheckCircle, DollarSign } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -34,6 +35,10 @@ const NovaCompra = () => {
   const [valorPorKgMacho, setValorPorKgMacho] = useState<string>('');
   const [valorPorKgFemea, setValorPorKgFemea] = useState<string>('');
   const [data, setData] = useState<string>(new Date().toISOString().split('T')[0]);
+  
+  // Precificação individual
+  const [precificacaoIndividual, setPrecificacaoIndividual] = useState<boolean>(false);
+  const [valorTotalIndividual, setValorTotalIndividual] = useState<string>('');
   
   // Terminal de Pesagem
   const [itensLote, setItensLote] = useState<ItemLote[]>([]);
@@ -95,14 +100,29 @@ const NovaCompra = () => {
       return;
     }
     
-    if (!valorPorKgMacho || !valorPorKgFemea) {
-      toast.error('Configure os valores por kg antes de adicionar animais');
-      return;
+    // Validação condicional baseada no tipo de precificação
+    if (precificacaoIndividual) {
+      if (!valorTotalIndividual) {
+        toast.error('Informe o valor total do animal');
+        return;
+      }
+    } else {
+      if (!valorPorKgMacho || !valorPorKgFemea) {
+        toast.error('Configure os valores por kg antes de adicionar animais');
+        return;
+      }
     }
     
     const pesoNum = parseFloat(peso);
-    const valorPorKg = sexo === 'macho' ? parseFloat(valorPorKgMacho) : parseFloat(valorPorKgFemea);
-    const valorTotal = pesoNum * valorPorKg;
+    
+    // Calcular valor total baseado no tipo de precificação
+    let valorTotal: number;
+    if (precificacaoIndividual) {
+      valorTotal = parseFloat(valorTotalIndividual);
+    } else {
+      const valorPorKg = sexo === 'macho' ? parseFloat(valorPorKgMacho) : parseFloat(valorPorKgFemea);
+      valorTotal = pesoNum * valorPorKg;
+    }
     
     const novoItem: ItemLote = {
       id: Date.now().toString(),
@@ -126,6 +146,7 @@ const NovaCompra = () => {
     setIdAnimal((proximoId + 1).toString());
     setPeso('');
     setObservacoes('');
+    setValorTotalIndividual(''); // Limpar valor individual para próximo animal
     
     toast.success('Animal registrado!');
     
@@ -200,6 +221,8 @@ const NovaCompra = () => {
     setRaca(item.raca || 'NELORE');
     setPeso(item.peso.toString());
     setObservacoes(item.observacoes || '');
+    // Carregar valor total existente para permitir edição
+    setValorTotalIndividual(item.valorTotal.toString());
     setShowEditAnimal(true);
   };
   
@@ -212,7 +235,17 @@ const NovaCompra = () => {
     }
     
     const pesoNum = parseFloat(peso);
-    const valorPorKg = sexo === 'macho' ? parseFloat(valorPorKgMacho) : parseFloat(valorPorKgFemea);
+    
+    // Para edição, verificar se tem valor individual ou calcular por kg
+    let valorTotalCalc: number;
+    if (valorTotalIndividual) {
+      valorTotalCalc = parseFloat(valorTotalIndividual);
+    } else if (valorPorKgMacho && valorPorKgFemea) {
+      const valorPorKg = sexo === 'macho' ? parseFloat(valorPorKgMacho) : parseFloat(valorPorKgFemea);
+      valorTotalCalc = pesoNum * valorPorKg;
+    } else {
+      valorTotalCalc = animalEditando.valorTotal; // Manter valor original se não houver como calcular
+    }
     
     const animalAtualizado: ItemLote = {
       ...animalEditando,
@@ -221,7 +254,7 @@ const NovaCompra = () => {
       categoria: sexo === 'macho' ? 'garrote' : 'bezerra',
       raca,
       peso: pesoNum,
-      valorTotal: pesoNum * valorPorKg,
+      valorTotal: valorTotalCalc,
       observacoes: observacoes || undefined,
     };
     
@@ -347,30 +380,48 @@ const NovaCompra = () => {
                 )}
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="valorMacho">Valor por Kg (Macho) *</Label>
-                  <Input
-                    id="valorMacho"
-                    type="number"
-                    step="0.01"
-                    placeholder="R$ 0,00"
-                    value={valorPorKgMacho}
-                    onChange={(e) => setValorPorKgMacho(e.target.value)}
-                  />
+              {/* Switch para precificação individual */}
+              <div className="flex items-center justify-between p-4 border rounded-lg bg-muted/30">
+                <div className="space-y-1">
+                  <Label className="text-base font-medium">Precificação por Cabeça</Label>
+                  <p className="text-sm text-muted-foreground">
+                    {precificacaoIndividual 
+                      ? 'Inserir valor total de cada animal manualmente' 
+                      : 'Calcular valor automaticamente (peso × R$/kg)'}
+                  </p>
                 </div>
-                <div>
-                  <Label htmlFor="valorFemea">Valor por Kg (Fêmea) *</Label>
-                  <Input
-                    id="valorFemea"
-                    type="number"
-                    step="0.01"
-                    placeholder="R$ 0,00"
-                    value={valorPorKgFemea}
-                    onChange={(e) => setValorPorKgFemea(e.target.value)}
-                  />
-                </div>
+                <Switch
+                  checked={precificacaoIndividual}
+                  onCheckedChange={setPrecificacaoIndividual}
+                />
               </div>
+
+              {!precificacaoIndividual && (
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="valorMacho">Valor por Kg (Macho) *</Label>
+                    <Input
+                      id="valorMacho"
+                      type="number"
+                      step="0.01"
+                      placeholder="R$ 0,00"
+                      value={valorPorKgMacho}
+                      onChange={(e) => setValorPorKgMacho(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="valorFemea">Valor por Kg (Fêmea) *</Label>
+                    <Input
+                      id="valorFemea"
+                      type="number"
+                      step="0.01"
+                      placeholder="R$ 0,00"
+                      value={valorPorKgFemea}
+                      onChange={(e) => setValorPorKgFemea(e.target.value)}
+                    />
+                  </div>
+                </div>
+              )}
 
               <div>
                 <Label htmlFor="data">Data da Compra *</Label>
@@ -388,7 +439,7 @@ const NovaCompra = () => {
             size="lg"
             className="w-full h-14 text-lg"
             onClick={() => setShowTerminal(true)}
-            disabled={!valorPorKgMacho || !valorPorKgFemea}
+            disabled={!precificacaoIndividual && (!valorPorKgMacho || !valorPorKgFemea)}
           >
             <Plus className="mr-2 h-5 w-5" />
             Abrir Terminal de Pesagem
@@ -578,9 +629,37 @@ const NovaCompra = () => {
                 placeholder="Digite o peso e pressione ENTER"
                 value={peso}
                 onChange={(e) => setPeso(e.target.value)}
-                onKeyDown={(e) => handleKeyDown(e)}
+                onKeyDown={(e) => {
+                  if (precificacaoIndividual) {
+                    handleKeyDown(e);
+                  } else {
+                    handleKeyDown(e);
+                  }
+                }}
               />
             </div>
+
+            {precificacaoIndividual && (
+              <div>
+                <Label htmlFor="valorTotalIndividual" className="text-base flex items-center gap-2">
+                  <DollarSign className="h-4 w-4" />
+                  Valor Total do Animal *
+                </Label>
+                <Input
+                  id="valorTotalIndividual"
+                  type="number"
+                  step="0.01"
+                  className="h-12 text-lg"
+                  placeholder="R$ 0,00 - Valor total por cabeça"
+                  value={valorTotalIndividual}
+                  onChange={(e) => setValorTotalIndividual(e.target.value)}
+                  onKeyDown={(e) => handleKeyDown(e)}
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  Insira o valor negociado por cabeça
+                </p>
+              </div>
+            )}
 
             <div>
               <Label htmlFor="obs" className="text-base">Observações (opcional)</Label>
@@ -691,6 +770,25 @@ const NovaCompra = () => {
                 value={peso}
                 onChange={(e) => setPeso(e.target.value)}
               />
+            </div>
+
+            <div>
+              <Label htmlFor="editValorTotal" className="text-base flex items-center gap-2">
+                <DollarSign className="h-4 w-4" />
+                Valor Total do Animal
+              </Label>
+              <Input
+                id="editValorTotal"
+                type="number"
+                step="0.01"
+                className="h-12 text-lg"
+                placeholder="Deixe vazio para calcular por kg"
+                value={valorTotalIndividual}
+                onChange={(e) => setValorTotalIndividual(e.target.value)}
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                Preencha apenas se o valor foi negociado por cabeça
+              </p>
             </div>
 
             <div>
