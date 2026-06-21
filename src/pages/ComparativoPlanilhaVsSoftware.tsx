@@ -183,6 +183,38 @@ const ComparativoPlanilhaVsSoftware = () => {
       </section>
 
       <section className="mb-12">
+        <h2 className="text-2xl font-bold text-foreground mb-2">
+          Tabela resumo das 6 categorias
+        </h2>
+        <p className="text-muted-foreground mb-6">
+          Uma visão rápida lado a lado, com notas curtas para você bater o olho
+          e decidir.
+        </p>
+        <div className="rounded-lg border overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[180px]">Categoria</TableHead>
+                <TableHead>Planilha manual</TableHead>
+                <TableHead>BoiControl</TableHead>
+                <TableHead className="min-w-[220px]">Nota</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {tabelaResumo.map((row) => (
+                <TableRow key={row.categoria}>
+                  <TableCell className="font-medium">{row.categoria}</TableCell>
+                  <TableCell className="text-muted-foreground">{row.manual}</TableCell>
+                  <TableCell className="text-foreground font-medium">{row.software}</TableCell>
+                  <TableCell className="text-sm text-muted-foreground">{row.nota}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      </section>
+
+      <section className="mb-12">
         <h2 className="text-2xl font-bold text-foreground mb-4">
           Quando ainda faz sentido usar planilha?
         </h2>
