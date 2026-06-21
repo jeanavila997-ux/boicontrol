@@ -1,3 +1,4 @@
+import { SEO } from '@/components/SEO';
 import { useApp } from '@/contexts/AppContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -140,7 +141,8 @@ const Relatorios = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="mb-8">
+      <SEO title="Relatórios de Compras | BoiControl" description="Gere relatórios consolidados das suas compras de gado em PDF, Excel e CSV." path="/relatorios" />
+            <div className="mb-8">
         <h1 className="text-3xl font-bold text-foreground mb-2">Relatórios</h1>
         <p className="text-muted-foreground">Exporte todos os dados do sistema</p>
       </div>

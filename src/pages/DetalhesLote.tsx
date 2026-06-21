@@ -1,3 +1,4 @@
+import { SEO } from '@/components/SEO';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useApp } from '@/contexts/AppContext';
 import { Button } from '@/components/ui/button';
@@ -25,7 +26,8 @@ const DetalhesLote = () => {
   if (!lote) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <p className="text-center text-muted-foreground">Lote não encontrado</p>
+      <SEO title="Detalhes do Lote | BoiControl" description="Detalhes completos do lote: animais pesados, valores, fazenda, produtor e exportação de relatório." path="/lotes" />
+              <p className="text-center text-muted-foreground">Lote não encontrado</p>
       </div>
     );
   }

@@ -1,3 +1,4 @@
+import { SEO } from '@/components/SEO';
 import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -333,7 +334,8 @@ const NovaCompra = () => {
   
   return (
     <div className="container mx-auto p-4 md:p-6 max-w-7xl">
-      <div className="mb-6">
+      <SEO title="Nova Compra de Gado | BoiControl" description="Registre uma nova compra de gado com terminal de pesagem individual, cálculo por kg ou por cabeça." path="/nova-compra" />
+            <div className="mb-6">
         <h1 className="text-3xl font-bold text-foreground mb-2">Nova Compra</h1>
         <p className="text-muted-foreground">Terminal profissional de entrada de animais</p>
       </div>
