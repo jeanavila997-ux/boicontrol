@@ -3,6 +3,14 @@ import { SEO } from '@/components/SEO';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import {
   Check,
   X,
   Clock,
@@ -13,6 +21,45 @@ import {
   TrendingUp,
   ArrowRight,
 } from 'lucide-react';
+
+const tabelaResumo = [
+  {
+    categoria: 'Tempo de registro',
+    manual: '30–60 min por lote',
+    software: '< 10 min por lote',
+    nota: 'Pesagem digital elimina retrabalho de digitar duas vezes.',
+  },
+  {
+    categoria: 'Precisão dos cálculos',
+    manual: 'Erros frequentes em fórmulas',
+    software: 'Cálculo automático e validado',
+    nota: 'Arrobas, peso médio e valor por kg sem fórmulas manuais.',
+  },
+  {
+    categoria: 'Relatórios',
+    manual: 'Formatação manual no Excel',
+    software: 'PDF, Excel e CSV em 1 clique',
+    nota: 'Modelos prontos para enviar a parceiros e contabilidade.',
+  },
+  {
+    categoria: 'Segurança dos dados',
+    manual: 'Arquivo pode ser perdido',
+    software: 'Armazenamento local + offline',
+    nota: 'Dados ficam no dispositivo, sem depender de internet.',
+  },
+  {
+    categoria: 'Uso no campo',
+    manual: 'Papel ou planilha no celular',
+    software: 'PWA instalável, modo curral',
+    nota: 'Interface pensada para uso rápido durante a pesagem.',
+  },
+  {
+    categoria: 'Visão gerencial',
+    manual: 'Sem consolidação histórica',
+    software: 'Dashboard com filtros',
+    nota: 'Acompanhe totais por fazenda, produtor e período.',
+  },
+];
 
 const comparativo = [
   {
@@ -132,6 +179,38 @@ const ComparativoPlanilhaVsSoftware = () => {
               </CardContent>
             </Card>
           ))}
+        </div>
+      </section>
+
+      <section className="mb-12">
+        <h2 className="text-2xl font-bold text-foreground mb-2">
+          Tabela resumo das 6 categorias
+        </h2>
+        <p className="text-muted-foreground mb-6">
+          Uma visão rápida lado a lado, com notas curtas para você bater o olho
+          e decidir.
+        </p>
+        <div className="rounded-lg border overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[180px]">Categoria</TableHead>
+                <TableHead>Planilha manual</TableHead>
+                <TableHead>BoiControl</TableHead>
+                <TableHead className="min-w-[220px]">Nota</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {tabelaResumo.map((row) => (
+                <TableRow key={row.categoria}>
+                  <TableCell className="font-medium">{row.categoria}</TableCell>
+                  <TableCell className="text-muted-foreground">{row.manual}</TableCell>
+                  <TableCell className="text-foreground font-medium">{row.software}</TableCell>
+                  <TableCell className="text-sm text-muted-foreground">{row.nota}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </div>
       </section>
 
