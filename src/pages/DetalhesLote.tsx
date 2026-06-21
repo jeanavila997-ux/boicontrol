@@ -1,3 +1,4 @@
+import { SEO } from '@/components/SEO';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useApp } from '@/contexts/AppContext';
 import { Button } from '@/components/ui/button';
@@ -25,7 +26,7 @@ const DetalhesLote = () => {
   if (!lote) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <p className="text-center text-muted-foreground">Lote não encontrado</p>
+              <p className="text-center text-muted-foreground">Lote não encontrado</p>
       </div>
     );
   }
@@ -74,6 +75,7 @@ const DetalhesLote = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <SEO title={`${lote.nomeLote || 'Lote'} | BoiControl`} description={`Detalhes do lote ${lote.nomeLote || ''}: ${lote.itens.length} animais, valores, fazenda e produtor.`} path={`/lotes/${lote.id}`} />
       <Button onClick={() => navigate('/lotes')} variant="ghost" className="mb-6">
         <ArrowLeft className="mr-2 h-4 w-4" />
         Voltar para Lotes

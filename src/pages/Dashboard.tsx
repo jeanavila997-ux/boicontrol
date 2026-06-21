@@ -1,3 +1,4 @@
+import { SEO } from '@/components/SEO';
 import { Button } from '@/components/ui/button';
 import { StatsCard } from '@/components/StatsCard';
 import { LoteCard } from '@/components/LoteCard';
@@ -18,7 +19,8 @@ const Dashboard = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="mb-8">
+      <SEO title="Dashboard | BoiControl - Gestão de Gado" description="Visão geral dos lotes, animais pesados, arrobas e valores totais das suas compras de gado." path="/" />
+            <div className="mb-8">
         <h1 className="text-3xl font-bold text-foreground mb-2">Dashboard</h1>
         <p className="text-muted-foreground">Visão geral das suas compras de gado</p>
       </div>

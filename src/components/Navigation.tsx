@@ -26,7 +26,7 @@ export const Navigation = () => {
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-2">
             <img src={logo} alt="BoiControl Logo" className="h-10 w-10" />
-            <h1 className="text-xl font-bold text-foreground">BoiControl</h1>
+            <span className="text-xl font-bold text-foreground">BoiControl</span>
           </div>
           
           {/* Desktop Navigation */}
@@ -49,7 +49,7 @@ export const Navigation = () => {
           {/* Mobile Navigation */}
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild className="md:hidden">
-              <Button variant="ghost" size="icon">
+              <Button variant="ghost" size="icon" aria-label="Abrir menu de navegação">
                 <Menu className="h-6 w-6" />
               </Button>
             </SheetTrigger>

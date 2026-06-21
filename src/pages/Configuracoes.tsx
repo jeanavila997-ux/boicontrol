@@ -1,3 +1,4 @@
+import { SEO } from '@/components/SEO';
 import { useState } from 'react';
 import { useApp } from '@/contexts/AppContext';
 import { Button } from '@/components/ui/button';
@@ -31,7 +32,8 @@ const Configuracoes = () => {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-2xl">
-      <div className="mb-8">
+      <SEO title="Configurações | BoiControl" description="Ajuste preferências do BoiControl, como kg por arroba e dados da fazenda principal." path="/configuracoes" />
+            <div className="mb-8">
         <h1 className="text-3xl font-bold text-foreground mb-2">Configurações</h1>
         <p className="text-muted-foreground">Gerencie as configurações do sistema</p>
       </div>

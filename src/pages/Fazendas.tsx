@@ -1,3 +1,4 @@
+import { SEO } from '@/components/SEO';
 import { useState } from 'react';
 import { useApp } from '@/contexts/AppContext';
 import { Button } from '@/components/ui/button';
@@ -102,7 +103,8 @@ const Fazendas = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="flex items-center justify-between mb-8">
+      <SEO title="Fazendas | BoiControl" description="Cadastro e gestão de fazendas para vincular aos lotes de compra de gado." path="/fazendas" />
+            <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold text-foreground mb-2">Fazendas</h1>
           <p className="text-muted-foreground">Gerencie as fazendas cadastradas</p>

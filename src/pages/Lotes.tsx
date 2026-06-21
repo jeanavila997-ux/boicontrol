@@ -1,3 +1,4 @@
+import { SEO } from '@/components/SEO';
 import { useState } from 'react';
 import { useApp } from '@/contexts/AppContext';
 import { LoteCard } from '@/components/LoteCard';
@@ -138,7 +139,8 @@ const Lotes = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="flex items-center justify-between mb-8">
+      <SEO title="Lotes de Compra | BoiControl" description="Consulte todos os lotes de compra de gado com filtros por data, fazenda, produtor e origem." path="/lotes" />
+            <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold text-foreground mb-2">Lotes</h1>
           <p className="text-muted-foreground">Todos os lotes cadastrados</p>

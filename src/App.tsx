@@ -29,18 +29,20 @@ const App = () => (
         <BrowserRouter>
           <div className="min-h-screen bg-background">
             <Navigation />
-            <Routes>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/nova-compra" element={<NovaCompra />} />
-              <Route path="/lotes" element={<Lotes />} />
-              <Route path="/lotes/:id" element={<DetalhesLote />} />
-              <Route path="/produtores" element={<Produtores />} />
-              <Route path="/fazendas" element={<Fazendas />} />
-              <Route path="/relatorios" element={<Relatorios />} />
-              <Route path="/configuracoes" element={<Configuracoes />} />
-              <Route path="/offline" element={<Offline />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+            <main>
+              <Routes>
+                <Route path="/" element={<Dashboard />} />
+                <Route path="/nova-compra" element={<NovaCompra />} />
+                <Route path="/lotes" element={<Lotes />} />
+                <Route path="/lotes/:id" element={<DetalhesLote />} />
+                <Route path="/produtores" element={<Produtores />} />
+                <Route path="/fazendas" element={<Fazendas />} />
+                <Route path="/relatorios" element={<Relatorios />} />
+                <Route path="/configuracoes" element={<Configuracoes />} />
+                <Route path="/offline" element={<Offline />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </main>
           </div>
         </BrowserRouter>
       </AppProvider>
