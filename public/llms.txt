@@ -1,0 +1,14 @@
+# BoiControl
+
+> Sistema simples e intuitivo para gestão de compras de gado: registro de lotes, pesagem individual, controle de produtores e fazendas, e geração de relatórios.
+
+BoiControl é um PWA voltado para pecuaristas e compradores de gado. Permite registrar compras, pesar animais individualmente, calcular valores por kg ou por cabeça, e exportar relatórios em PDF, Excel e CSV — funcionando offline.
+
+## Pages
+
+- [Início](/): Dashboard com resumo de lotes, animais e valores.
+- [Nova Compra](/nova-compra): Registro de novo lote com terminal de pesagem individual.
+- [Lotes](/lotes): Lista de todos os lotes de compra com filtros.
+- [Produtores](/produtores): Cadastro de produtores parceiros.
+- [Fazendas](/fazendas): Cadastro de fazendas.
+- [Relatórios](/relatorios): Geração de relatórios consolidados (PDF, Excel, CSV).

@@ -390,6 +390,7 @@ const NovaCompra = () => {
                   <Button
                     type="button"
                     variant="outline"
+                    aria-label="Adicionar novo produtor"
                     onClick={() => setShowAddProdutor(true)}
                   >
                     <Plus className="h-4 w-4" />
