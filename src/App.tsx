@@ -16,6 +16,7 @@ import Relatorios from "./pages/Relatorios";
 import Configuracoes from "./pages/Configuracoes";
 import Offline from "./pages/Offline";
 import NotFound from "./pages/NotFound";
+import ComparativoPlanilhaVsSoftware from "./pages/ComparativoPlanilhaVsSoftware";
 
 const queryClient = new QueryClient();
 
@@ -40,6 +41,7 @@ const App = () => (
                 <Route path="/relatorios" element={<Relatorios />} />
                 <Route path="/configuracoes" element={<Configuracoes />} />
                 <Route path="/offline" element={<Offline />} />
+                <Route path="/comparativo-planilha-vs-software" element={<ComparativoPlanilhaVsSoftware />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </main>

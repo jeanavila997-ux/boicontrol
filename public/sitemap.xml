@@ -6,5 +6,6 @@
   <url><loc>https://boicontrol.lovable.app/produtores</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://boicontrol.lovable.app/fazendas</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://boicontrol.lovable.app/relatorios</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://boicontrol.lovable.app/comparativo-planilha-vs-software</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://boicontrol.lovable.app/configuracoes</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
 </urlset>
