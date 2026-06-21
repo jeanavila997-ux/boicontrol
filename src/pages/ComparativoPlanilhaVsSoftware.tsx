@@ -190,7 +190,36 @@ const ComparativoPlanilhaVsSoftware = () => {
           Uma visão rápida lado a lado, com notas curtas para você bater o olho
           e decidir.
         </p>
-        <div className="rounded-lg border overflow-x-auto">
+        {/* Mobile: stacked cards */}
+        <div className="grid gap-3 md:hidden">
+          {tabelaResumo.map((row) => (
+            <Card key={row.categoria}>
+              <CardContent className="p-4">
+                <h3 className="font-semibold text-foreground mb-3">{row.categoria}</h3>
+                <div className="space-y-2 mb-3">
+                  <div className="flex gap-2">
+                    <X className="h-4 w-4 text-destructive shrink-0 mt-0.5" aria-hidden="true" />
+                    <div className="text-sm">
+                      <span className="font-medium text-foreground">Planilha: </span>
+                      <span className="text-muted-foreground">{row.manual}</span>
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <Check className="h-4 w-4 text-primary shrink-0 mt-0.5" aria-hidden="true" />
+                    <div className="text-sm">
+                      <span className="font-medium text-foreground">BoiControl: </span>
+                      <span className="text-muted-foreground">{row.software}</span>
+                    </div>
+                  </div>
+                </div>
+                <p className="text-xs text-muted-foreground border-t pt-2">{row.nota}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        {/* Tablet/Desktop: full table */}
+        <div className="hidden md:block rounded-lg border overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
