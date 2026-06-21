@@ -12,3 +12,4 @@ BoiControl é um PWA voltado para pecuaristas e compradores de gado. Permite reg
 - [Produtores](/produtores): Cadastro de produtores parceiros.
 - [Fazendas](/fazendas): Cadastro de fazendas.
 - [Relatórios](/relatorios): Geração de relatórios consolidados (PDF, Excel, CSV).
+- [Planilha vs Software](/comparativo-planilha-vs-software): Comparativo entre controle manual em planilha e software de gestão de gado.
